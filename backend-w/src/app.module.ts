@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from './product/product.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { PaymentModule } from './payment/payment.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -23,8 +25,14 @@ import { TransactionModule } from './transaction/transaction.module';
       autoLoadEntities: true,
       synchronize: true, 
     }),
+    ConfigModule.forRoot({
+      isGlobal: true, // Make the configuration available globally
+     // envFilePath: '.env', // Load environment variables from .env file
+    }),
     ProductModule,
     TransactionModule,
+    PaymentModule,
   ],
+
 })
 export class AppModule {}

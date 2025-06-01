@@ -6,9 +6,11 @@ import { Transaction } from './entities/transaction.entity';
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
-  @Post()
-  create(@Body() body: Partial<Transaction>): Promise<Transaction> {
-    return this.transactionService.create(body);
+   @Post()
+  async create(@Body() body: Partial<Transaction>): Promise<{ status: string; transaction: Transaction }> {
+    const transaction = await this.transactionService.create(body);
+    const finalStatus = await this.transactionService.processPayment(transaction);
+    return { status: finalStatus, transaction };
   }
 
   @Get()
