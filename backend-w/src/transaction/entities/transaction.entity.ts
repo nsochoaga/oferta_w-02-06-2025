@@ -1,24 +1,31 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
-
-export type TransactionStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Transaction {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  amount: number;
+  @Column({ nullable: true })
+  wompiId: string;
+
+  @Column({ unique: true })
+  reference: string;
 
   @Column()
-  productId: number;
+  amountInCents: number;
 
   @Column()
+  currency: string;
+
+  @Column()
+  status: string;
+
+  @Column({ nullable: true })
   customerEmail: string;
-
-  @Column({ type: 'varchar' })
-  status: TransactionStatus;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -16,6 +16,7 @@ export class TransactionService {
       ...data,
       status: 'PENDING',
     });
+    console.log("📩 función create de transactionservice", data);
     return this.transactionRepository.save(transaction);
   }
 
@@ -23,46 +24,32 @@ export class TransactionService {
     return this.transactionRepository.find();
   }
 
-  async processPayment(transaction: Transaction): Promise<'APPROVED' | 'REJECTED'> {
-  try {
-    const response = await axios.post(
-      'https://api-sandbox.co.uat.wompi.dev/v1/transactions',
-      {
-        amount_in_cents: Number(transaction.amount) * 100,
-        currency: 'COP',
-        customer_email: transaction.customerEmail,
-        payment_method: {
-          type: 'CARD',
-          token: 'tok_test_visa_4242', // token de tarjeta de prueba de Wompi
-        },
-        reference: transaction.id,
-      },
-      {
-        headers: {
-          Authorization: `Bearer prv_stagtest_5i0ZGIGiFcDQifYsXxvsny7Y37tKqFWg`,
-        },
-      },
-    );
+async updateOrCreate(transactionData: {
+  wompiId: string;
+  reference: string;
+  amountInCents: number;
+  currency: string;
+  status: string;
+  customerEmail: string;
+}) {
+  let existing = await this.transactionRepository.findOne({ where: { reference: transactionData.reference } });
 
-    const status = response.data.data.status; // usually 'APPROVED' or 'DECLINED'
-    const finalStatus = status === 'APPROVED' ? 'APPROVED' : 'REJECTED';
-
-    // actualizar en base de datos
-    await this.transactionRepository.update(transaction.id, {
-      status: finalStatus,
-    });
-
-    return finalStatus;
-  } catch (error) {
-    console.error('Error al procesar pago con Wompi:', error.response?.data || error.message);
-
-    await this.transactionRepository.update(transaction.id, {
-      status: 'REJECTED',
-    });
-
-    return 'REJECTED';
+  if (existing) {
+    console.log("📩 Actualizando transacción existente:", existing.id);
+    existing.status = transactionData.status;
+    existing.wompiId = transactionData.wompiId;
+    existing.customerEmail = transactionData.customerEmail;
+    return await this.transactionRepository.save(existing);
   }
+
+  const tx = this.transactionRepository.create(transactionData);
+  return await this.transactionRepository.save(tx);
 }
+
+async findByReference(reference: string) {
+  return this.transactionRepository.findOne({ where: { reference } });
+}
+
 }
 
 
