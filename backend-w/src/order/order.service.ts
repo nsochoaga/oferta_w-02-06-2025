@@ -30,6 +30,14 @@ export class OrderService {
       if (!product) {
         throw new NotFoundException(`Producto ${item.productId} no existe`);
       }
+      
+      if (product.stock < item.quantity) {
+  throw new Error(`No hay suficiente stock para el producto ${product.name}`);
+}
+
+product.stock -= item.quantity;
+await this.productRepo.save(product); 
+
 
       const orderItem = this.orderItemRepo.create({
         order: savedOrder,
