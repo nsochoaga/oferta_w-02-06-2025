@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
 import { OrderItem } from './order.item.entity';
+import { Delivery } from '../../delivery/entities/delivery.entity';
 
 @Entity('orders')
 export class Order {
@@ -14,4 +15,7 @@ export class Order {
 
   @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];
+
+  @OneToMany(() => Delivery, (delivery) => delivery.order)
+  deliveries: Delivery[];
 }

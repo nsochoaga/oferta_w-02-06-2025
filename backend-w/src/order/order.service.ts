@@ -21,7 +21,7 @@ export class OrderService {
     const savedOrder = await this.orderRepo.save(order);
 
     const orderItems: OrderItem[] = [];
-
+    console.log("📩 Orden creandose en order.service:", savedOrder.id);
     for (const item of items) {
       const product = await this.productRepo.findOne({
         where: { id: item.productId },
