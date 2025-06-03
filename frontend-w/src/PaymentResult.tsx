@@ -23,12 +23,14 @@ const PaymentResult = () => {
         );
         const data = await res.json();
         setStatus(data.status);
+        console.log("data obtained:", data);
         if (data.status === "APPROVED") {
           const orderRes = await fetch("http://localhost:3000/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              transactionId: id,
+              reference: data.reference,
+              customerEmail: data.email,
               items: cart.map((item) => ({
                 productId: item.id,
                 quantity: item.quantity,
