@@ -35,7 +35,6 @@ async getTransactionStatus(@Query("id") id: string) {
     const { status } = response.data.data; 
     const {email} = transactionData.merchant;
     const reference = transactionData.reference;
-    console.log("📩 Datos de la transacción:", transactionData);
     if (status ) {
       await this.transactionService.updateOrCreate({
         wompiId: transactionData.id,

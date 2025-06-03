@@ -7,6 +7,7 @@ const PaymentResult = () => {
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { cart, clearCart } = useCart();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const id = params.get("id");
@@ -18,14 +19,12 @@ const PaymentResult = () => {
 
     const fetchStatus = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/payment/status?id=${id}`
-        );
+        const res = await fetch(`${apiUrl}/payment/status?id=${id}`);
         const data = await res.json();
         setStatus(data.status);
-        console.log("data obtained:", data);
+
         if (data.status === "APPROVED") {
-          const orderRes = await fetch("http://localhost:3000/orders", {
+          const orderRes = await fetch(`${apiUrl}/orders`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -44,9 +43,10 @@ const PaymentResult = () => {
           } else {
             console.error("❌ Error al crear la orden");
           }
+
           const order = await orderRes.json();
 
-          await fetch("http://localhost:3000/delivery", {
+          await fetch(`${apiUrl}/delivery`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -57,6 +57,7 @@ const PaymentResult = () => {
           });
         }
       } catch (err) {
+        console.error(err);
         setError("Error al consultar la transacción.");
       }
     };
@@ -64,15 +65,59 @@ const PaymentResult = () => {
     fetchStatus();
   }, [params]);
 
-  if (error) return <p>Error: {error}</p>;
-  if (!status) return <p>Consultando transacción...</p>;
+  if (error)
+    return (
+      <div className="p-8 text-center text-red-600 font-semibold text-lg">
+        ❌ Error: {error}
+      </div>
+    );
+
+  if (!status)
+    return (
+      <div className="p-8 text-center text-gray-600 text-lg">
+        ⏳ Consultando transacción...
+      </div>
+    );
+
+  const statusColor =
+    status === "APPROVED"
+      ? "text-green-600 bg-green-100 border-green-300"
+      : status === "DECLINED"
+      ? "text-red-600 bg-red-100 border-red-300"
+      : status === "PENDING"
+      ? "text-yellow-600 bg-yellow-100 border-yellow-300"
+      : "text-gray-600 bg-gray-100 border-gray-300";
 
   return (
-    <div>
-      <h2>Resultado del pago</h2>
-      <p>
-        Estado: <strong>{status}</strong>
-      </p>
+    <div className="max-w-xl mx-auto mt-12 p-6 bg-white rounded-xl shadow-md border text-center">
+      <h2 className="text-2xl font-bold text-blue-700 mb-4">
+        🎉 Resultado del Pago
+      </h2>
+      <div className={`rounded-md p-4 border ${statusColor}`}>
+        <p className="text-lg font-medium">
+          Estado de la transacción:
+          <span className="block text-2xl mt-2 font-bold">{status}</span>
+        </p>
+      </div>
+
+      {status === "APPROVED" && (
+        <p className="mt-4 text-green-700 font-semibold">
+          ¡Tu pago fue exitoso! Hemos registrado tu orden y será entregada
+          pronto. 🛍️
+        </p>
+      )}
+
+      {status === "DECLINED" && (
+        <p className="mt-4 text-red-600 font-medium">
+          Hubo un problema con el pago. Por favor intenta nuevamente.
+        </p>
+      )}
+
+      {status === "PENDING" && (
+        <p className="mt-4 text-yellow-600 font-medium">
+          Tu transacción está pendiente. Te notificaremos cuando se actualice.
+        </p>
+      )}
     </div>
   );
 };

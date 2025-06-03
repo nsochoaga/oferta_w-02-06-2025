@@ -33,7 +33,6 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
       const found = prev.find((p) => p.id === item.id);
-      console.log("Producto encontrado:", found);
       if (found) {
         return prev.map((p) =>
           p.id === item.id ? { ...p, quantity: p.quantity + 1 } : p

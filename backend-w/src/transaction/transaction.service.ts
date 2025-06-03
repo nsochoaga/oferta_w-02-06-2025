@@ -12,12 +12,10 @@ export class TransactionService {
   ) {}
 
   create(data: Partial<Transaction>): Promise<Transaction> {
-    console.log("📩 función create de transactionservice", data);
     const transaction = this.transactionRepository.create({
       ...data,
       status: 'PENDING',
     });
-    console.log("📩 función create de transactionservice", data);
     return this.transactionRepository.save(transaction);
   }
 

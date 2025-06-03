@@ -6,13 +6,13 @@ const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
+  const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:3000/products");
+        const res = await fetch(`${apiUrl}/products`);
         const data = await res.json();
         setProducts(data);
-        console.log("Productos obtenidos:", data);
       } catch (err) {
         console.error("Error al obtener los productos:", err);
       } finally {
@@ -27,30 +27,50 @@ const ProductList = () => {
 
   return (
     <div>
-      <h2>Lista de Productos</h2>
-      {products.length === 0 ? (
-        <p>No hay productos disponibles.</p>
-      ) : (
-        <ul>
-          {products.map((product) => (
-            <li key={product.id}>
-              <strong>{product.name}</strong> - {product.description} <br />
-              Precio: ${product.price} | Stock: {product.stock}
-              <button
-                onClick={() =>
-                  addToCart({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                  })
-                }
+      <h2 className="text-3xl font-bold mb-6 underline underline-offset-4 decoration-blue-500">
+        Productos disponibles
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-4">
+        {products.length === 0 ? (
+          <p>No hay productos disponibles.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white shadow-md rounded-xl p-4 flex flex-col justify-between w-full"
               >
-                Agregar al carrito
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                <div>
+                  <h3 className="text-lg font-bold text-blue-700">
+                    {product.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-2">
+                    {product.description}
+                  </p>
+                  <p className="text-gray-800 font-semibold">
+                    💲{product.price}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Stock: {product.stock}
+                  </p>
+                </div>
+                <button
+                  className="mt-4 bg-blue-600 text-white text-sm rounded px-4 py-2 hover:bg-blue-700 transition"
+                  onClick={() =>
+                    addToCart({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                    })
+                  }
+                >
+                  Agregar al carrito
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -16,16 +16,19 @@ const Checkout = () => {
   const referenceRef = useRef("REF_" + uuidv4());
   const reference = referenceRef.current;
 
+  const publicKey = import.meta.env.VITE_WOMPI_PUBLIC_KEY;
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const redirectUrl = import.meta.env.VITE_REDIRECT_URL;
+
   useEffect(() => {
     const loadScript = async () => {
       if (!formRef.current || cargado || cart.length === 0) return;
 
-      const publicKey = "pub_stagtest_g2u0HQd3ZMh05hsSgTS2lUV8t3s4mOt7";
       const currency = "COP";
       const amountInCents = Math.round(totalAmount * 100); // importante: convertir a centavos
 
       try {
-        await fetch("http://localhost:3000/payment/transaction", {
+        await fetch(`${apiUrl}/payment/transaction`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ reference, amount: amountInCents, currency }),
@@ -39,10 +42,9 @@ const Checkout = () => {
       let data;
       try {
         const res = await fetch(
-          `http://localhost:3000/payment/integrity-hash?reference=${reference}&amount=${amountInCents}&currency=${currency}`
+          `${apiUrl}/payment/integrity-hash?reference=${reference}&amount=${amountInCents}&currency=COP`
         );
         data = await res.json();
-        console.log("Hash recibido:", data.hash);
       } catch (err) {
         console.error("Error obteniendo firma:", err);
         return;
@@ -57,10 +59,7 @@ const Checkout = () => {
       script.setAttribute("data-amount-in-cents", amountInCents.toString());
       script.setAttribute("data-reference", reference);
       script.setAttribute("data-signature:integrity", data.hash);
-      script.setAttribute(
-        "data-redirect-url",
-        "http://localhost:5173/payment-result"
-      );
+      script.setAttribute("data-redirect-url", redirectUrl);
 
       formRef.current.innerHTML = ""; // Limpiar antes de agregar el nuevo botón
       formRef.current.appendChild(script);
@@ -71,20 +70,32 @@ const Checkout = () => {
   }, [cart, cargado]);
 
   return (
-    <div>
-      <h2>Resumen del carrito</h2>
-      {cart.map((item) => (
-        <p key={item.id}>
-          {item.name} x {item.quantity} = $
-          {(item.price * item.quantity).toFixed(2)}
-        </p>
-      ))}
-      <p>
-        Total: <strong>${totalAmount.toFixed(2)}</strong>
-      </p>
-      <form ref={formRef} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8 flex justify-center">
+      <div className="max-w-2xl w-full bg-white p-8 rounded-2xl shadow-lg">
+        <h2 className="text-3xl font-bold mb-6 text-blue-700 text-center">
+          🧾 Resumen del Carrito
+        </h2>
+
+        {cart.map((item) => (
+          <div key={item.id} className="mb-3 border-b pb-2">
+            <p className="text-lg font-medium text-gray-800">{item.name}</p>
+            <p className="text-sm text-gray-600">
+              {item.quantity} x ${item.price} = $
+              {(item.price * item.quantity).toFixed(2)}
+            </p>
+          </div>
+        ))}
+
+        <div className="mt-6 text-lg font-semibold text-gray-900">
+          Total:{" "}
+          <span className="text-blue-600">${totalAmount.toFixed(2)}</span>
+        </div>
+
+        {error && <p className="text-red-600 font-medium mt-4">{error}</p>}
+
+        <form ref={formRef} className="mt-6 flex justify-center" />
+      </div>
     </div>
   );
 };
-
 export default Checkout;

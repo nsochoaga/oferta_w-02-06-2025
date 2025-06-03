@@ -16,7 +16,6 @@ export class DeliveryService {
   ) {}
 
   async create(dto: CreateDeliveryDto): Promise<Delivery> {
-    console.log("📩 Creando entrega con datos:", dto);
     const order = await this.orderRepo.findOne({ where: { id: dto.orderId } });
 
     if (!order) {
