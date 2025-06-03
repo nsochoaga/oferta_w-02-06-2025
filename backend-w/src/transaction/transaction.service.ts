@@ -12,6 +12,7 @@ export class TransactionService {
   ) {}
 
   create(data: Partial<Transaction>): Promise<Transaction> {
+    console.log("📩 función create de transactionservice", data);
     const transaction = this.transactionRepository.create({
       ...data,
       status: 'PENDING',
@@ -35,7 +36,6 @@ async updateOrCreate(transactionData: {
   let existing = await this.transactionRepository.findOne({ where: { reference: transactionData.reference } });
 
   if (existing) {
-    console.log("📩 Actualizando transacción existente:", existing.id);
     existing.status = transactionData.status;
     existing.wompiId = transactionData.wompiId;
     existing.customerEmail = transactionData.customerEmail;

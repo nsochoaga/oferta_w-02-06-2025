@@ -14,14 +14,23 @@ export class OrderService {
     @InjectRepository(Product) private productRepo: Repository<Product>,
   ) {}
 
-  async createOrder(
+  async createOrder(reference: string, customerEmail: string,
     items: { productId: number; quantity: number }[],
   ) {
-    const order = this.orderRepo.create();
+    const existing = await this.orderRepo.findOne({
+    where: { reference },
+    relations: ["items", "items.product"],
+  });
+
+  if (existing) {
+    console.warn(`⚠️ Ya existe una orden con referencia ${reference}`);
+    return existing;
+  }
+    const order = this.orderRepo.create({
+    reference, customerEmail});
     const savedOrder = await this.orderRepo.save(order);
 
     const orderItems: OrderItem[] = [];
-    console.log("📩 Orden creandose en order.service:", savedOrder.id);
     for (const item of items) {
       const product = await this.productRepo.findOne({
         where: { id: item.productId },
@@ -56,4 +65,12 @@ await this.productRepo.save(product);
       items: orderItems,
     };
   }
+
+async findAll() {
+  return this.orderRepo.find({
+    relations: ["items", "items.product"],
+    order: { id: "DESC" },
+  });
+}
+
 }

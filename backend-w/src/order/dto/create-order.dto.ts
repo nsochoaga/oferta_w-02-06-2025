@@ -7,11 +7,15 @@ class OrderItemDto {
 
   @IsNumber()
   quantity: number;
+
 }
 
 export class CreateOrderDto {
   @IsString()
-  transactionId: string;
+  reference: string;
+
+    @IsString()
+    customerEmail: string;
 
   @IsArray()
   @ValidateNested({ each: true })

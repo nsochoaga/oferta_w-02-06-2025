@@ -16,7 +16,6 @@ async createTransaction(reference: string, amountInCents: number, currency: stri
     let existing = await this.transactionRepo.findOne({ where: { reference: reference } });
 
   if (existing) {
-    console.log("📩 Actualizando transacción existente:", existing.id);
     existing.status = 'PENDING'; 
     existing.customerEmail = customerEmail;
     existing.amountInCents = amountInCents;
@@ -46,4 +45,9 @@ async createTransaction(reference: string, amountInCents: number, currency: stri
 
     return crypto.createHash('sha256').update(rawString).digest('hex');
   }
+
+async findAll() {
+  return this.transactionRepo.find(); 
+}
+
 }

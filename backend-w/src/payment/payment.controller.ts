@@ -33,6 +33,9 @@ async getTransactionStatus(@Query("id") id: string) {
     );
     const transactionData = response.data.data;
     const { status } = response.data.data; 
+    const {email} = transactionData.merchant;
+    const reference = transactionData.reference;
+    console.log("📩 Datos de la transacción:", transactionData);
     if (status ) {
       await this.transactionService.updateOrCreate({
         wompiId: transactionData.id,
@@ -44,7 +47,7 @@ async getTransactionStatus(@Query("id") id: string) {
       });
     }
 
-    return { status };
+    return { status, email, reference };
   } catch (error) {
     console.error("Error al consultar transacción:", error.response?.data || error.message);
     throw new InternalServerErrorException("Error consultando transacción");
@@ -74,6 +77,13 @@ async createTransaction(
     throw new InternalServerErrorException('Error creando la transacción');
   }
 }
+
+// payment.controller.ts
+@Get("all")
+async getAllTransactions() {
+  return this.transactionService.findAll(); // Esto debe usar tu repositorio
+}
+
 
 }
 

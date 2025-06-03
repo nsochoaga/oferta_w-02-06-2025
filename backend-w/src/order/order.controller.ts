@@ -1,5 +1,4 @@
-// src/order/order.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto'; // Asegúrate de que este DTO esté definido correctamente
 
@@ -9,7 +8,13 @@ export class OrderController {
 
   @Post()
 createOrder(@Body() body: CreateOrderDto) {
-  const { transactionId, items } = body;
-  return this.orderService.createOrder(items);
+  const { reference,customerEmail,  items } = body;
+  return this.orderService.createOrder(reference,customerEmail,items);
 }
+
+ @Get()
+  findAll() {
+    return this.orderService.findAll();
+  }
+
 }

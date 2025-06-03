@@ -7,6 +7,9 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+reference: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
