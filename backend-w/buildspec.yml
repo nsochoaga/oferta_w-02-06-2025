@@ -2,6 +2,9 @@ version: "0.2"
 phases:
   pre_build:
     commands:
+      - echo "Limpiando contenedores antiguos si existen"
+      - docker rm -f $(docker ps -aq) || true
+      - docker rmi -f $(docker images -aq) || true
       - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 832689825609.dkr.ecr.us-east-2.amazonaws.com
   build:
     commands:
