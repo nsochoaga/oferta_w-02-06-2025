@@ -1,5 +1,5 @@
 # Etapa 1: build
-FROM node:20-alpine as build
+FROM public.ecr.aws/docker/library/node:20-alpine as build
 
 WORKDIR /app
 
