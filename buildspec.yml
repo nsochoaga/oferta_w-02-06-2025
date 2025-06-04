@@ -1,17 +1,18 @@
 version: 0.2
 
 phases:
-  pre_build:
+  install:
     commands:
-      - echo "Limpiando contenedores antiguos si existen"
-      - docker rm -f $(docker ps -aq) || true
-      - docker rmi -f $(docker images -aq) || true
+      - echo "Cambiando al directorio backend-w/"
+      - cd backend-w
+      - echo "Logeando en Amazon ECR..."
       - aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 832689825609.dkr.ecr.us-east-2.amazonaws.com
   build:
     commands:
-      - docker build -t $ImageName -f ./Dockerfile .
-      - docker images
+      - echo "Construyendo imagen Docker desde backend-w..."
+      - docker build -t backend-app .
+      - docker tag backend-app:latest 832689825609.dkr.ecr.us-east-2.amazonaws.com/backend-app:latest
   post_build:
     commands:
-      - docker tag $ImageName:latest 832689825609.dkr.ecr.us-east-2.amazonaws.com/$ImageName:latest
-      - docker push 832689825609.dkr.ecr.us-east-2.amazonaws.com/$ImageName:latest
+      - echo "Enviando imagen a ECR..."
+      - docker push 832689825609.dkr.ecr.us-east-2.amazonaws.com/backend-app:latest
