@@ -55,7 +55,11 @@ const ProductList = () => {
                   </p>
                 </div>
                 <button
-                  className="mt-4 bg-blue-600 text-white text-sm rounded px-4 py-2 hover:bg-blue-700 transition"
+                  className={`mt-4 text-sm rounded px-4 py-2 transition ${
+                    product.stock <= 0
+                      ? "bg-gray-400 cursor-not-allowed text-white"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }`}
                   onClick={() =>
                     addToCart({
                       id: product.id,
@@ -63,6 +67,7 @@ const ProductList = () => {
                       price: product.price,
                     })
                   }
+                  disabled={product.stock <= 0}
                 >
                   Agregar al carrito
                 </button>
