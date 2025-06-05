@@ -68,7 +68,35 @@ npm run dev
 
 ## 🧪 Pruebas
 
-Pruebas
+1. Se utilizaron tests unitarios con Jest para asegurar el correcto funcionamiento de los servicios y controladores del backend desarrollado con NestJS.
+
+   ✔️ Resultado de npm run test
+
+   ```bash
+       npm run test
+
+       > backend-w@0.0.1 test
+       > jest
+
+       PASS  src/payment/payment.service.spec.ts (12.636 s)
+       PASS  src/order/order.service.spec.ts (12.75 s)
+       PASS  src/product/product.service.spec.ts (13.067 s)
+       PASS  src/transaction/transaction.service.spec.ts (13.144 s)
+       PASS  src/app.controller.spec.ts
+       PASS  src/payment/payment.controller.spec.ts (13.35 s)
+       PASS  src/product/product.controller.spec.ts
+       PASS  src/delivery/delivery.controller.spec.ts (13.609 s)
+       PASS  src/app.service.spec.ts
+       PASS  src/delivery/delivery.service.spec.ts
+       PASS  src/order/order.controller.spec.ts (13.754 s)
+       PASS  src/transaction/transaction.controller.spec.ts
+
+       Test Suites: 12 passed, 12 total
+       Tests:       52 passed, 52 total
+       Snapshots:   0 total
+       Time:        15.195 s
+       Ran all test suites.
+   ```
 
 ## 📝 Notas
 
