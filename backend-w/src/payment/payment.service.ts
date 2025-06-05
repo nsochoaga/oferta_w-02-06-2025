@@ -34,9 +34,11 @@ async createTransaction(reference: string, amountInCents: number, currency: stri
     return this.transactionRepo.save(transaction);
   }
 
-  private readonly integritySecret = 'stagtest_integrity_nAIBuqayW70XpUqJS4qf4STYiISd89Fp';
-
+  
+  private readonly integritySecret = process.env.INTEGRITY_SECRET || 'some-default-secret';
+  
   generateIntegrityHash(reference: string, amountInCents: number, currency: string = 'COP', expirationTime?: string): string {
+    
     let rawString = `${reference}${amountInCents}${currency}`;
     if (expirationTime) {
       rawString += expirationTime;

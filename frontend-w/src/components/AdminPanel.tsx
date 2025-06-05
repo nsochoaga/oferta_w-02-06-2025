@@ -74,7 +74,7 @@ const AdminPanel = () => {
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between">
                   <p className="font-medium text-gray-800">
-                    ID: {order.id} | Email: {order.customerEmail}
+                    Ref: {order.reference} | Email: {order.customerEmail}
                   </p>
                   <p className="text-sm">
                     <strong>Estado Transacción: </strong>
@@ -122,7 +122,7 @@ const AdminPanel = () => {
                 className="bg-white p-4 rounded-lg shadow text-gray-700"
               >
                 <p>
-                  <strong>Pedido #{delivery.order.id}</strong>
+                  <strong>Pedido #{delivery.order.reference}</strong>
                 </p>
                 <p>📍 {delivery.address}</p>
                 <p>
