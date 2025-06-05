@@ -38,26 +38,25 @@ const PaymentResult = () => {
           });
 
           if (orderRes.ok) {
+            const order = await orderRes.json();
+            const storedAddress =
+              localStorage.getItem("deliveryAddress") || "Sin dirección";
+
+            await fetch(`${apiUrl}/delivery`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId: order.id,
+                address: storedAddress,
+                status: "PENDING",
+              }),
+            });
             console.log("✅ Orden creada exitosamente");
             clearCart();
             localStorage.removeItem("deliveryAddress");
           } else {
             console.error("❌ Error al crear la orden");
           }
-
-          const order = await orderRes.json();
-          const storedAddress =
-            localStorage.getItem("deliveryAddress") || "Sin dirección";
-
-          await fetch(`${apiUrl}/delivery`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              orderId: order.id,
-              address: storedAddress,
-              status: "PENDING",
-            }),
-          });
         }
       } catch (err) {
         console.error(err);
