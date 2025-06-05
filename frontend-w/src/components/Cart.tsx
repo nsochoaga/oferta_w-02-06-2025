@@ -1,10 +1,20 @@
+import { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import { Link } from "react-router-dom";
 
 const Cart = () => {
   const { cart, removeFromCart, clearCart } = useCart();
-
+  const [address, setAddress] = useState("");
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleProceedToPayment = () => {
+    if (!address.trim()) {
+      alert("Por favor ingresa una dirección de entrega.");
+      return;
+    }
+    localStorage.setItem("deliveryAddress", address);
+    window.location.href = "/checkout";
+  };
 
   if (cart.length === 0) {
     return (
@@ -57,6 +67,19 @@ const Cart = () => {
         Total: <span className="text-green-700">${total.toFixed(2)}</span>
       </div>
 
+      <div>
+        <label className="font-semibold text-lg text-blue-700">
+          Dirección de entrega:
+        </label>
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          className="w-full border rounded-md p-2 mb-4"
+          placeholder="Ej: Calle 123 #45-67"
+        />
+      </div>
+
       <div className="flex justify-end gap-4">
         <button
           onClick={clearCart}
@@ -65,11 +88,12 @@ const Cart = () => {
           Vaciar Carrito
         </button>
 
-        <Link to="/checkout">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-            Proceder al pago
-          </button>
-        </Link>
+        <button
+          onClick={handleProceedToPayment}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        >
+          Proceder al pago
+        </button>
       </div>
     </div>
   );

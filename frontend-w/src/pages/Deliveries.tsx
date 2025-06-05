@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 
+interface Order {
+  id: number;
+  reference: string;
+  createdAt: string;
+  customerEmail: string;
+}
+
 interface Delivery {
   id: number;
   address: string;
   status: string;
-  orderId: number;
+  order: Order;
 }
 
 const Deliveries = () => {
@@ -18,6 +25,7 @@ const Deliveries = () => {
         const res = await fetch(`${apiUrl}/delivery`);
         const data = await res.json();
         setDeliveries(data);
+        console.log("Entregas cargadas:", data);
       } catch (err) {
         console.error("Error al cargar entregas:", err);
       } finally {
@@ -68,7 +76,7 @@ const Deliveries = () => {
               >
                 <div className="mb-2 sm:mb-0">
                   <p className="text-gray-800 font-semibold">
-                    Pedido #{delivery.orderId}
+                    Pedido #{delivery.order.reference}
                   </p>
                   <p className="text-gray-600">📍 {delivery.address}</p>
                 </div>

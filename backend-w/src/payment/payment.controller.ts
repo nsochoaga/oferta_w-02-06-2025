@@ -80,7 +80,7 @@ async createTransaction(
 // payment.controller.ts
 @Get("all")
 async getAllTransactions() {
-  return this.transactionService.findAll(); // Esto debe usar tu repositorio
+  return this.transactionService.findAll(); 
 }
 
 

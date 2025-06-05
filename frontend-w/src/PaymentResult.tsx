@@ -40,18 +40,21 @@ const PaymentResult = () => {
           if (orderRes.ok) {
             console.log("✅ Orden creada exitosamente");
             clearCart();
+            localStorage.removeItem("deliveryAddress");
           } else {
             console.error("❌ Error al crear la orden");
           }
 
           const order = await orderRes.json();
+          const storedAddress =
+            localStorage.getItem("deliveryAddress") || "Sin dirección";
 
           await fetch(`${apiUrl}/delivery`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               orderId: order.id,
-              address: "Calle Ficticia #123",
+              address: storedAddress,
               status: "PENDING",
             }),
           });
@@ -118,6 +121,15 @@ const PaymentResult = () => {
           Tu transacción está pendiente. Te notificaremos cuando se actualice.
         </p>
       )}
+
+      <div className="mt-6">
+        <a
+          href="/"
+          className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors duration-200"
+        >
+          Volver al inicio
+        </a>
+      </div>
     </div>
   );
 };

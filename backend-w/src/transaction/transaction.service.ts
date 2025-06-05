@@ -11,13 +11,22 @@ export class TransactionService {
     private transactionRepository: Repository<Transaction>,
   ) {}
 
-  create(data: Partial<Transaction>): Promise<Transaction> {
-    const transaction = this.transactionRepository.create({
-      ...data,
-      status: 'PENDING',
-    });
-    return this.transactionRepository.save(transaction);
+async  create(data: Partial<Transaction>): Promise<Transaction> {
+     const existing = await this.transactionRepository.findOne({
+    where: { reference: data.reference },
+  });
+
+  if (existing) {
+    throw new Error(`Ya existe una transacción con la referencia ${data.reference}`);
   }
+
+  const transaction = this.transactionRepository.create({
+    ...data,
+    status: 'PENDING',
+  });
+
+  return this.transactionRepository.save(transaction);
+}
 
   findAll(): Promise<Transaction[]> {
     return this.transactionRepository.find();

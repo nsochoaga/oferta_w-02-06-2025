@@ -33,6 +33,7 @@ const Checkout = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ reference, amount: amountInCents, currency }),
         });
+        console.log("✅ Transacción pending se ejecuta");
       } catch (err) {
         console.error("❌ Error creando transacción pending", err);
         setError("No se pudo iniciar la transacción.");
